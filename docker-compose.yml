@@ -10,7 +10,7 @@ services:
 #    depends_on:
 #      - db
     volumes: # ローカルとコンテナのパスをマウント
-#      - ./backend:/backend
+      - ./app:/app
       - /etc/localtime:/etc/localtime:ro # タイムゾーンを日本時刻に設定
       #      - $HOME/.aws/:/root/.aws/ # localのaws credential情報をコンテナにコピー (ローカルのaws情報を参照する場合)
 #    working_dir: /backend
