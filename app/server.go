@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	firebase "firebase.google.com/go"
+	"github.com/labstack/echo/v4"
 	"google.golang.org/api/option"
 	"log"
 	"net/http"
@@ -11,6 +12,8 @@ import (
 
 func main() {
 	log.Printf("server start")
+
+	e := echo.New()
 
 	port := os.Getenv("BACKEND_PORT")
 	if port == "" {
@@ -25,5 +28,8 @@ func main() {
 	}
 	log.Printf("ok initializing app")
 
-	http.ListenAndServe(":4000", nil)
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World")
+	})
+	e.Logger.Fatal(e.Start(":" + port))
 }
