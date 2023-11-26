@@ -6,15 +6,21 @@ import (
 	"google.golang.org/api/option"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
-	log.Printf("connect to http://localhost:%s/ for rest api", "4000")
+	log.Printf("server start")
 
-	opt := option.WithCredentialsFile("firebase/serviceAccountKey.json")
+	port := os.Getenv("BACKEND_PORT")
+	if port == "" {
+		port = "4000"
+	}
+	log.Printf("connect to http://localhost:%s/ for rest api", port)
+
+	opt := option.WithCredentialsJSON([]byte(os.Getenv("GOOGLE_CREDENTIALS_JSON")))
 	_, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		//return nil, fmt.Errorf("error initializing app: %v", err)
 		log.Printf("error initializing app: %v", err)
 	}
 	log.Printf("ok initializing app")

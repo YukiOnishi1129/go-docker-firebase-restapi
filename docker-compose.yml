@@ -7,16 +7,16 @@ services:
       dockerfile: ./app/Dockerfile
     tty: true
     stdin_open: true
-#    depends_on:
-#      - db
-    volumes: # ローカルとコンテナのパスをマウント
+    volumes:
       - ./app:/app
       - /etc/localtime:/etc/localtime:ro # タイムゾーンを日本時刻に設定
       #      - $HOME/.aws/:/root/.aws/ # localのaws credential情報をコンテナにコピー (ローカルのaws情報を参照する場合)
-#    working_dir: /backend
-    command: air -c .air.toml
     ports:
       - ${BACKEND_PORT}:${BACKEND_CONTAINER_PORT}
     security_opt:
       - seccomp:unconfined
-#    environment:
+    environment:
+      - BACKEND_CONTAINER_NAME=${BACKEND_CONTAINER_NAME}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - BACKEND_CONTAINER_PORT=${BACKEND_CONTAINER_PORT}
+      - GOOGLE_CREDENTIALS_JSON=${GOOGLE_CREDENTIALS_JSON}
