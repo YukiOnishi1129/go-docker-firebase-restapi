@@ -9,6 +9,12 @@ type SaveTodoUseCase struct {
 	todoRepo todoDomain.TodoRepository
 }
 
+func NewSaveTodoUseCase(todoRepo todoDomain.TodoRepository) *SaveTodoUseCase {
+	return &SaveTodoUseCase{
+		todoRepo: todoRepo,
+	}
+}
+
 type SaveTodoUseCaseInputDTO struct {
 	Title       string
 	Description string

@@ -24,11 +24,11 @@ func NewHandler(
 	}
 }
 
-func (h *handler) PostTodos(ctx echo.Context) {
+func (h handler) PostTodo(ctx echo.Context) error {
 	var params PostTodosParams
 	if err := ctx.Bind(&params); err != nil {
 		ctx.JSON(400, err)
-		return
+		return err
 	}
 
 	//	TODO: バリデーション
@@ -41,7 +41,7 @@ func (h *handler) PostTodos(ctx echo.Context) {
 	dto, err := h.saveTodoUseCase.Run(ctx.Request().Context(), input)
 	if err != nil {
 		ctx.JSON(500, err)
-		return
+		return err
 	}
 
 	response := postTodoResponse{
@@ -53,18 +53,20 @@ func (h *handler) PostTodos(ctx echo.Context) {
 	}
 	err = ctx.JSON(http.StatusCreated, response)
 	if err != nil {
-		return
+		return err
 	}
+	return nil
 }
 
-// GetTodoById godoc
-func (h *handler) GetTodoById(ctx echo.Context, id string) {
+// GetTodoByID godoc
+func (h *handler) GetTodoByID(ctx echo.Context) error {
 	//	TODO: バリデーション
 
+	id := ctx.Param("id")
 	dto, err := h.findByIdTodoUseCase.Run(ctx.Request().Context(), id)
 	if err != nil {
 		ctx.JSON(500, err)
-		return
+		return err
 	}
 
 	response := getTodoResponse{
@@ -76,16 +78,18 @@ func (h *handler) GetTodoById(ctx echo.Context, id string) {
 	}
 	err = ctx.JSON(http.StatusOK, response)
 	if err != nil {
-		return
+		return err
 	}
+
+	return nil
 }
 
 // GetTodos godoc
-func (h *handler) GetTodos(ctx echo.Context) {
+func (h handler) GetTodos(ctx echo.Context) error {
 	dtos, err := h.fetchTodoUseCase.Run(ctx.Request().Context())
 	if err != nil {
 		ctx.JSON(500, err)
-		return
+		return err
 	}
 
 	var response []getTodoResponse
@@ -101,14 +105,17 @@ func (h *handler) GetTodos(ctx echo.Context) {
 
 	err = ctx.JSON(http.StatusOK, response)
 	if err != nil {
-		return
+		return err
 	}
+	return nil
 }
 
-func (h *handler) PutTodosById(ctx echo.Context, id string) {
+func (h handler) PutTodoByID(ctx echo.Context) error {
 	var params PutTodosParams
+	// id := ctx.Param("id")
 	if err := ctx.Bind(&params); err != nil {
 		ctx.JSON(400, err)
-		return
+		return err
 	}
+	return nil
 }
