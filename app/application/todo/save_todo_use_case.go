@@ -35,5 +35,9 @@ func (uc *SaveTodoUseCase) Run(ctx context.Context, input SaveTodoUseCaseInputDT
 	if err != nil {
 		return nil, err
 	}
-	return &SaveTodoUseCaseOutputDTO{}, nil
+	return &SaveTodoUseCaseOutputDTO{
+		ID:          t.ID(),
+		Title:       t.Title(),
+		Description: t.Description(),
+	}, nil
 }

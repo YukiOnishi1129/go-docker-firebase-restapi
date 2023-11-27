@@ -32,10 +32,11 @@ func main() {
 	}
 	log.Printf("ok initializing app")
 
-	_, err = app.Firestore(ctx)
+	client, err := app.Firestore(ctx)
 	if err != nil {
 		log.Printf("error initializing firestore: %v", err)
 	}
+	defer client.Close()
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		//AllowOrigins: []string{"http://localhost:80"},
@@ -47,7 +48,7 @@ func main() {
 		},
 	}))
 
-	route.InitRoute(e)
+	route.InitRoute(e, client)
 
 	//vi := e.Group("/api/v1")
 	//

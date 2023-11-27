@@ -17,6 +17,18 @@ type Todo struct {
 	description string
 }
 
+func Reconstruct(
+	id string,
+	title string,
+	description string,
+) (*Todo, error) {
+	return newTodo(
+		id,
+		title,
+		description,
+	)
+}
+
 func newTodo(id string, title string, description string) (*Todo, error) {
 	//titleのバリデーション
 	if utf8.RuneCountInString(title) <= titleLengthMin || utf8.RuneCountInString(title) >= titleLengthMax {
