@@ -47,7 +47,7 @@ func NewServerSetting() {
 
 	// CORSの設定
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		//AllowOrigins: []string{"http://localhost:80"},
+		AllowOrigins: []string{"http://localhost:80", "http://localhost:3000"},
 		AllowMethods: []string{
 			http.MethodGet,
 			http.MethodPut,

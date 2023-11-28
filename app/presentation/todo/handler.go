@@ -2,6 +2,7 @@ package todo
 
 import (
 	"github.com/YukiOnishi1129/go-docker-firebase-restapi/application/todo"
+	responseError "github.com/YukiOnishi1129/go-docker-firebase-restapi/presentation/error"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -27,7 +28,7 @@ func NewHandler(
 func (h Handler) PostTodo(ctx echo.Context) error {
 	var params PostTodosParams
 	if err := ctx.Bind(&params); err != nil {
-		err := ctx.JSON(400, err)
+		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
 		if err != nil {
 			return err
 		}
@@ -43,7 +44,7 @@ func (h Handler) PostTodo(ctx echo.Context) error {
 
 	dto, err := h.saveTodoUseCase.Run(ctx.Request().Context(), input)
 	if err != nil {
-		err := ctx.JSON(500, err)
+		err := ctx.JSON(http.StatusInternalServerError, responseError.NewErrorResponse(http.StatusInternalServerError, err))
 		if err != nil {
 			return err
 		}
@@ -71,7 +72,7 @@ func (h *Handler) GetTodoByID(ctx echo.Context) error {
 	id := ctx.Param("id")
 	dto, err := h.findByIdTodoUseCase.Run(ctx.Request().Context(), id)
 	if err != nil {
-		err := ctx.JSON(500, err)
+		err := ctx.JSON(http.StatusInternalServerError, responseError.NewErrorResponse(http.StatusInternalServerError, err))
 		if err != nil {
 			return err
 		}
@@ -97,7 +98,7 @@ func (h *Handler) GetTodoByID(ctx echo.Context) error {
 func (h Handler) GetTodos(ctx echo.Context) error {
 	dtoList, err := h.fetchTodoUseCase.Run(ctx.Request().Context())
 	if err != nil {
-		err := ctx.JSON(500, err)
+		err := ctx.JSON(http.StatusInternalServerError, responseError.NewErrorResponse(http.StatusInternalServerError, err))
 		if err != nil {
 			return err
 		}
@@ -126,7 +127,7 @@ func (h Handler) PutTodoByID(ctx echo.Context) error {
 	var params PutTodosParams
 	// id := ctx.Param("id")
 	if err := ctx.Bind(&params); err != nil {
-		err := ctx.JSON(400, err)
+		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
 		if err != nil {
 			return err
 		}
