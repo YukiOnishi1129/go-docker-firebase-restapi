@@ -63,7 +63,6 @@ func (r *todoRepository) FindAll(ctx context.Context) ([]*todo.Todo, error) {
 
 	var todos []*todo.Todo
 	for _, d := range doc {
-
 		docTitle, err := d.DataAt("title")
 		if err != nil {
 			return nil, err
@@ -84,7 +83,6 @@ func (r *todoRepository) FindAll(ctx context.Context) ([]*todo.Todo, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		todos = append(todos, td)
 	}
 	return todos, nil

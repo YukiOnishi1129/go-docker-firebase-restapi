@@ -29,7 +29,6 @@ func (uc *FetchTodoUseCase) Run(ctx context.Context) ([]*FetchTodoUseCaseDto, er
 	var output []*FetchTodoUseCaseDto
 
 	for _, t := range todos {
-		//log.Printf("-- %s", t.ID())
 		output = append(output, &FetchTodoUseCaseDto{
 			ID:          t.ID(),
 			Title:       t.Title(),

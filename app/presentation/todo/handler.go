@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type handler struct {
+type Handler struct {
 	saveTodoUseCase     *todo.SaveTodoUseCase
 	findByIdTodoUseCase *todo.FindByIdTodoUseCase
 	fetchTodoUseCase    *todo.FetchTodoUseCase
@@ -16,18 +16,21 @@ func NewHandler(
 	saveTodoUseCase *todo.SaveTodoUseCase,
 	findByIdTodoUseCase *todo.FindByIdTodoUseCase,
 	fetchTodoUseCase *todo.FetchTodoUseCase,
-) *handler {
-	return &handler{
+) *Handler {
+	return &Handler{
 		saveTodoUseCase:     saveTodoUseCase,
 		findByIdTodoUseCase: findByIdTodoUseCase,
 		fetchTodoUseCase:    fetchTodoUseCase,
 	}
 }
 
-func (h handler) PostTodo(ctx echo.Context) error {
+func (h Handler) PostTodo(ctx echo.Context) error {
 	var params PostTodosParams
 	if err := ctx.Bind(&params); err != nil {
-		ctx.JSON(400, err)
+		err := ctx.JSON(400, err)
+		if err != nil {
+			return err
+		}
 		return err
 	}
 
@@ -40,7 +43,10 @@ func (h handler) PostTodo(ctx echo.Context) error {
 
 	dto, err := h.saveTodoUseCase.Run(ctx.Request().Context(), input)
 	if err != nil {
-		ctx.JSON(500, err)
+		err := ctx.JSON(500, err)
+		if err != nil {
+			return err
+		}
 		return err
 	}
 
@@ -59,13 +65,16 @@ func (h handler) PostTodo(ctx echo.Context) error {
 }
 
 // GetTodoByID godoc
-func (h *handler) GetTodoByID(ctx echo.Context) error {
+func (h *Handler) GetTodoByID(ctx echo.Context) error {
 	//	TODO: バリデーション
 
 	id := ctx.Param("id")
 	dto, err := h.findByIdTodoUseCase.Run(ctx.Request().Context(), id)
 	if err != nil {
-		ctx.JSON(500, err)
+		err := ctx.JSON(500, err)
+		if err != nil {
+			return err
+		}
 		return err
 	}
 
@@ -85,15 +94,18 @@ func (h *handler) GetTodoByID(ctx echo.Context) error {
 }
 
 // GetTodos godoc
-func (h handler) GetTodos(ctx echo.Context) error {
-	dtos, err := h.fetchTodoUseCase.Run(ctx.Request().Context())
+func (h Handler) GetTodos(ctx echo.Context) error {
+	dtoList, err := h.fetchTodoUseCase.Run(ctx.Request().Context())
 	if err != nil {
-		ctx.JSON(500, err)
+		err := ctx.JSON(500, err)
+		if err != nil {
+			return err
+		}
 		return err
 	}
 
 	var response []getTodoResponse
-	for _, dto := range dtos {
+	for _, dto := range dtoList {
 		response = append(response, getTodoResponse{
 			&todoResponseModel{
 				Id:          dto.ID,
@@ -110,11 +122,14 @@ func (h handler) GetTodos(ctx echo.Context) error {
 	return nil
 }
 
-func (h handler) PutTodoByID(ctx echo.Context) error {
+func (h Handler) PutTodoByID(ctx echo.Context) error {
 	var params PutTodosParams
 	// id := ctx.Param("id")
 	if err := ctx.Bind(&params); err != nil {
-		ctx.JSON(400, err)
+		err := ctx.JSON(400, err)
+		if err != nil {
+			return err
+		}
 		return err
 	}
 	return nil
