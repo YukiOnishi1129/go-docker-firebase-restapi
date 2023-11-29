@@ -1,0 +1,142 @@
+definitions:
+  todo.PostTodosParams:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  todo.PutTodosParams:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  todo.getTodoResponse:
+    properties:
+      todos:
+        $ref: '#/definitions/todo.todoResponseModel'
+    type: object
+  todo.postTodoResponse:
+    properties:
+      todo:
+        $ref: '#/definitions/todo.todoResponseModel'
+    type: object
+  todo.todoResponseModel:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/todos:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/todo.getTodoResponse'
+            type: array
+      summary: Todo一覧を取得する
+      tags:
+      - todos
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 作成するTodo
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/todo.PostTodosParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/todo.postTodoResponse'
+      summary: Todoを作成する
+      tags:
+      - todos
+  /api/v1/todos/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Todoを削除する
+      tags:
+      - todos
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/todo.getTodoResponse'
+      summary: idに紐づくTodoを取得する
+      tags:
+      - todos
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 更新するTodo
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/todo.PutTodosParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/todo.postTodoResponse'
+      summary: Todoを更新する
+      tags:
+      - todos
+swagger: "2.0"
