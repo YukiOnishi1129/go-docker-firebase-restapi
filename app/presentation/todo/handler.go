@@ -9,48 +9,29 @@ import (
 )
 
 type Handler struct {
-	saveTodoUseCase     *todo.CreateTodoUseCase
-	findByIdTodoUseCase *todo.FindByIdTodoUseCase
 	fetchTodoUseCase    *todo.FetchTodoUseCase
+	findByIdTodoUseCase *todo.FindByIdTodoUseCase
+	createTodoUseCase   *todo.CreateTodoUseCase
+	updateTodoUseCase   *todo.UpdateTodoUseCase
 }
 
 func NewHandler(
-	saveTodoUseCase *todo.CreateTodoUseCase,
-	findByIdTodoUseCase *todo.FindByIdTodoUseCase,
 	fetchTodoUseCase *todo.FetchTodoUseCase,
+	findByIdTodoUseCase *todo.FindByIdTodoUseCase,
+	createTodoUseCase *todo.CreateTodoUseCase,
+	updateTodoUseCase *todo.UpdateTodoUseCase,
 ) *Handler {
 	return &Handler{
-		saveTodoUseCase:     saveTodoUseCase,
-		findByIdTodoUseCase: findByIdTodoUseCase,
 		fetchTodoUseCase:    fetchTodoUseCase,
+		findByIdTodoUseCase: findByIdTodoUseCase,
+		createTodoUseCase:   createTodoUseCase,
+		updateTodoUseCase:   updateTodoUseCase,
 	}
 }
 
-func (h Handler) PostTodo(ctx echo.Context) error {
-	var params PostTodosParams
-	if err := ctx.Bind(&params); err != nil {
-		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
-		if err != nil {
-			return err
-		}
-		return err
-	}
-
-	validate := validator.GetValidator()
-	if err := validate.Struct(params); err != nil {
-		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
-		if err != nil {
-			return err
-		}
-		return err
-	}
-
-	input := todo.CreateTodoUseCaseInputDTO{
-		Title:       params.Title,
-		Description: params.Description,
-	}
-
-	dto, err := h.saveTodoUseCase.Run(ctx.Request().Context(), input)
+// GetTodos godoc
+func (h Handler) GetTodos(ctx echo.Context) error {
+	dtoList, err := h.fetchTodoUseCase.Run(ctx.Request().Context())
 	if err != nil {
 		err := ctx.JSON(http.StatusInternalServerError, responseError.NewErrorResponse(http.StatusInternalServerError, err))
 		if err != nil {
@@ -59,14 +40,18 @@ func (h Handler) PostTodo(ctx echo.Context) error {
 		return err
 	}
 
-	response := postTodoResponse{
-		todoResponseModel{
-			Id:          dto.ID,
-			Title:       dto.Title,
-			Description: dto.Description,
-		},
+	var response []getTodoResponse
+	for _, dto := range dtoList {
+		response = append(response, getTodoResponse{
+			&todoResponseModel{
+				Id:          dto.ID,
+				Title:       dto.Title,
+				Description: dto.Description,
+			},
+		})
 	}
-	err = ctx.JSON(http.StatusCreated, response)
+
+	err = ctx.JSON(http.StatusOK, response)
 	if err != nil {
 		return err
 	}
@@ -102,9 +87,31 @@ func (h *Handler) GetTodoByID(ctx echo.Context) error {
 	return nil
 }
 
-// GetTodos godoc
-func (h Handler) GetTodos(ctx echo.Context) error {
-	dtoList, err := h.fetchTodoUseCase.Run(ctx.Request().Context())
+func (h Handler) PostTodo(ctx echo.Context) error {
+	var params PostTodosParams
+	if err := ctx.Bind(&params); err != nil {
+		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
+		if err != nil {
+			return err
+		}
+		return err
+	}
+
+	validate := validator.GetValidator()
+	if err := validate.Struct(params); err != nil {
+		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
+		if err != nil {
+			return err
+		}
+		return err
+	}
+
+	input := todo.CreateTodoUseCaseInputDTO{
+		Title:       params.Title,
+		Description: params.Description,
+	}
+
+	dto, err := h.createTodoUseCase.Run(ctx.Request().Context(), input)
 	if err != nil {
 		err := ctx.JSON(http.StatusInternalServerError, responseError.NewErrorResponse(http.StatusInternalServerError, err))
 		if err != nil {
@@ -113,32 +120,65 @@ func (h Handler) GetTodos(ctx echo.Context) error {
 		return err
 	}
 
-	var response []getTodoResponse
-	for _, dto := range dtoList {
-		response = append(response, getTodoResponse{
-			&todoResponseModel{
-				Id:          dto.ID,
-				Title:       dto.Title,
-				Description: dto.Description,
-			},
-		})
+	response := postTodoResponse{
+		todoResponseModel{
+			Id:          dto.ID,
+			Title:       dto.Title,
+			Description: dto.Description,
+		},
 	}
-
-	err = ctx.JSON(http.StatusOK, response)
+	err = ctx.JSON(http.StatusCreated, response)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// PutTodoByID godoc
 func (h Handler) PutTodoByID(ctx echo.Context) error {
 	var params PutTodosParams
-	// id := ctx.Param("id")
+	id := ctx.Param("id")
 	if err := ctx.Bind(&params); err != nil {
 		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
 		if err != nil {
 			return err
 		}
+		return err
+	}
+
+	validate := validator.GetValidator()
+	if err := validate.Struct(params); err != nil {
+		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
+		if err != nil {
+			return err
+		}
+		return err
+	}
+
+	input := todo.UpdateTodoUseCaseInputDTO{
+		ID:          id,
+		Title:       params.Title,
+		Description: params.Description,
+	}
+
+	dto, err := h.updateTodoUseCase.Run(ctx.Request().Context(), input)
+	if err != nil {
+		err := ctx.JSON(http.StatusInternalServerError, responseError.NewErrorResponse(http.StatusInternalServerError, err))
+		if err != nil {
+			return err
+		}
+		return err
+	}
+
+	response := postTodoResponse{
+		todoResponseModel{
+			Id:          dto.ID,
+			Title:       dto.Title,
+			Description: dto.Description,
+		},
+	}
+	err = ctx.JSON(http.StatusCreated, response)
+	if err != nil {
 		return err
 	}
 	return nil
