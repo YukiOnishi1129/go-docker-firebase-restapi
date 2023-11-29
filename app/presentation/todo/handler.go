@@ -38,7 +38,7 @@ func NewHandler(
 // @Accept json
 // @Produce json
 // @Success 200 {array} getTodoResponse
-// @Router /v1/todos [get]
+// @Router /api/v1/todos [get]
 func (h Handler) GetTodos(ctx echo.Context) error {
 	dtoList, err := h.fetchTodoUseCase.Run(ctx.Request().Context())
 	if err != nil {
@@ -74,7 +74,7 @@ func (h Handler) GetTodos(ctx echo.Context) error {
 // @Produce json
 // @Param id path string true "id"
 // @Success 200 {object} getTodoResponse
-// @Router /v1/todos/{id} [get]
+// @Router /api/v1/todos/{id} [get]
 func (h *Handler) GetTodoByID(ctx echo.Context) error {
 	//	TODO: バリデーション
 
@@ -110,7 +110,7 @@ func (h *Handler) GetTodoByID(ctx echo.Context) error {
 // @Produce json
 // @Param request body PostTodosParams true "作成するTodo"
 // @Success 201 {object} postTodoResponse
-// @Router /v1/todos [post]
+// @Router /api/v1/todos [post]
 func (h Handler) PostTodo(ctx echo.Context) error {
 	var params PostTodosParams
 	if err := ctx.Bind(&params); err != nil {
@@ -166,7 +166,7 @@ func (h Handler) PostTodo(ctx echo.Context) error {
 // @Param id path string true "id"
 // @Param request body PutTodosParams true "更新するTodo"
 // @Success 201 {object} postTodoResponse
-// @Router /v1/todos/{id} [put]
+// @Router /api/v1/todos/{id} [put]
 func (h Handler) PutTodoByID(ctx echo.Context) error {
 	var params PutTodosParams
 	id := ctx.Param("id")
@@ -223,7 +223,7 @@ func (h Handler) PutTodoByID(ctx echo.Context) error {
 // @Produce json
 // @Param id path string true "id"
 // @Success 204
-// @Router /v1/todos/{id} [delete]
+// @Router /api/v1/todos/{id} [delete]
 func (h Handler) DeleteTodoByID(ctx echo.Context) error {
 	id := ctx.Param("id")
 	err := h.deleteTodoUseCase.Run(ctx.Request().Context(), id)
