@@ -87,3 +87,11 @@ func (r *todoRepository) FindAll(ctx context.Context) ([]*todo.Todo, error) {
 	}
 	return todos, nil
 }
+
+func (r *todoRepository) Remove(ctx context.Context, id string) error {
+	_, err := r.client.Collection("todos").Doc(id).Delete(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}

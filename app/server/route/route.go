@@ -22,10 +22,12 @@ func todoRoute(r *echo.Group, client *firestore.Client) {
 		todoApp.NewFindByIdTodoUseCase(todoRepository),
 		todoApp.NewCreateTodoUseCase(todoRepository),
 		todoApp.NewUpdateTodoUseCase(todoRepository),
+		todoApp.NewDeleteTodoUseCase(todoRepository),
 	)
 	group := r.Group("/todos")
 	group.GET("", h.GetTodos)
 	group.GET("/:id", h.GetTodoByID)
 	group.POST("", h.PostTodo)
 	group.PUT("/:id", h.PutTodoByID)
+	group.DELETE("/:id", h.DeleteTodoByID)
 }
