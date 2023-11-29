@@ -18,7 +18,7 @@ func InitRoute(api *echo.Echo, client *firestore.Client) {
 func todoRoute(r *echo.Group, client *firestore.Client) {
 	todoRepository := repository.NewTodoRepository(client)
 	h := todoPre.NewHandler(
-		todoApp.NewSaveTodoUseCase(todoRepository),
+		todoApp.NewCreateTodoUseCase(todoRepository),
 		todoApp.NewFindByIdTodoUseCase(todoRepository),
 		todoApp.NewFetchTodoUseCase(todoRepository),
 	)

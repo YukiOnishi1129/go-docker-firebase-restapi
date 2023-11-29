@@ -2,7 +2,7 @@ package todo
 
 import "context"
 
-// todoのドメインオブジェクトの永続化に関するインターフェース
+// TodoRepository is an interface for persistence of todo domain object
 type TodoRepository interface {
 	Save(ctx context.Context, todo *Todo) error
 	FindByID(ctx context.Context, id string) (*Todo, error)

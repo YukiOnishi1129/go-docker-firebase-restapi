@@ -9,13 +9,13 @@ import (
 )
 
 type Handler struct {
-	saveTodoUseCase     *todo.SaveTodoUseCase
+	saveTodoUseCase     *todo.CreateTodoUseCase
 	findByIdTodoUseCase *todo.FindByIdTodoUseCase
 	fetchTodoUseCase    *todo.FetchTodoUseCase
 }
 
 func NewHandler(
-	saveTodoUseCase *todo.SaveTodoUseCase,
+	saveTodoUseCase *todo.CreateTodoUseCase,
 	findByIdTodoUseCase *todo.FindByIdTodoUseCase,
 	fetchTodoUseCase *todo.FetchTodoUseCase,
 ) *Handler {
@@ -45,7 +45,7 @@ func (h Handler) PostTodo(ctx echo.Context) error {
 		return err
 	}
 
-	input := todo.SaveTodoUseCaseInputDTO{
+	input := todo.CreateTodoUseCaseInputDTO{
 		Title:       params.Title,
 		Description: params.Description,
 	}

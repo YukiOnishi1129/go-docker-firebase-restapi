@@ -5,28 +5,28 @@ import (
 	todoDomain "github.com/YukiOnishi1129/go-docker-firebase-restapi/domain/todo"
 )
 
-type SaveTodoUseCase struct {
+type CreateTodoUseCase struct {
 	todoRepo todoDomain.TodoRepository
 }
 
-func NewSaveTodoUseCase(todoRepo todoDomain.TodoRepository) *SaveTodoUseCase {
-	return &SaveTodoUseCase{
+func NewCreateTodoUseCase(todoRepo todoDomain.TodoRepository) *CreateTodoUseCase {
+	return &CreateTodoUseCase{
 		todoRepo: todoRepo,
 	}
 }
 
-type SaveTodoUseCaseInputDTO struct {
+type CreateTodoUseCaseInputDTO struct {
 	Title       string
 	Description string
 }
 
-type SaveTodoUseCaseOutputDTO struct {
+type CreateTodoUseCaseOutputDTO struct {
 	ID          string
 	Title       string
 	Description string
 }
 
-func (uc *SaveTodoUseCase) Run(ctx context.Context, input SaveTodoUseCaseInputDTO) (*SaveTodoUseCaseOutputDTO, error) {
+func (uc *CreateTodoUseCase) Run(ctx context.Context, input CreateTodoUseCaseInputDTO) (*CreateTodoUseCaseOutputDTO, error) {
 	t, err := todoDomain.NewTodo(input.Title, input.Description)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (uc *SaveTodoUseCase) Run(ctx context.Context, input SaveTodoUseCaseInputDT
 	if err != nil {
 		return nil, err
 	}
-	return &SaveTodoUseCaseOutputDTO{
+	return &CreateTodoUseCaseOutputDTO{
 		ID:          t.ID(),
 		Title:       t.Title(),
 		Description: t.Description(),
