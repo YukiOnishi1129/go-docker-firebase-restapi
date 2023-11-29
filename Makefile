@@ -16,10 +16,10 @@ go-add-library:
 
 # swagger
 gen-swagger:
-	swag init -g app/cmd/main.go  --output docs/swagger
+	swag init -g app/cmd/main.go  --output docs/swagger/config
 
 swagger-up:
-	docker-compose -f docs/swagger/docker-compose.yml up -d
+	docker-compose -f docs/docker-compose.yml up -d
 
 swagger-down:
-	docker-compose -f docs/swagger/docker-compose.yml down
+	docker-compose -f docs/docker-compose.yml down

@@ -38,8 +38,12 @@ definitions:
       title:
         type: string
     type: object
+host: localhost:8001
 info:
   contact: {}
+  description: 説明
+  title: go-docker-firebase-restapi
+  version: バージョン(1.0)
 paths:
   /api/v1/todos:
     get:
