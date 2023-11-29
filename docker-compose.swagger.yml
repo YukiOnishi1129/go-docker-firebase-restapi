@@ -2,14 +2,14 @@ version: '3.9'
 
 services:
   swagger-go:
-    container_name: "go-docker-firebase-restapi-swagger"
+    container_name: ${SWAGGER_CONTAINER_NAME}
     build:
-      context: swagger
+      context: ./docs/swagger
     tty: true
     stdin_open: true
     volumes:
-      - ./swagger:/app
+      - ./docs/swagger:/app
     ports:
-      - 8001:8001
+      - ${SWAGGER_PORT}:${SWAGGER_CONTAINER_PORT}
     security_opt:
       - seccomp:unconfined
