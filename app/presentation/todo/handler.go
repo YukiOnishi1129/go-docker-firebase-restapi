@@ -3,6 +3,7 @@ package todo
 import (
 	"github.com/YukiOnishi1129/go-docker-firebase-restapi/application/todo"
 	responseError "github.com/YukiOnishi1129/go-docker-firebase-restapi/presentation/error"
+	"github.com/YukiOnishi1129/go-docker-firebase-restapi/util/validator"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -35,7 +36,14 @@ func (h Handler) PostTodo(ctx echo.Context) error {
 		return err
 	}
 
-	//	TODO: バリデーション
+	validate := validator.GetValidator()
+	if err := validate.Struct(params); err != nil {
+		err := ctx.JSON(http.StatusBadRequest, responseError.NewErrorResponse(http.StatusBadRequest, err))
+		if err != nil {
+			return err
+		}
+		return err
+	}
 
 	input := todo.SaveTodoUseCaseInputDTO{
 		Title:       params.Title,
